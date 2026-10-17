@@ -1,0 +1,496 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chinese Couplet Creator</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#fff5e9;
+ color:#39271e;
+}
+header{
+ background:#a91e24;
+ color:white;
+ text-align:center;
+ padding:22px 12px;
+}
+header h1{margin:0;font-size:28px}
+header p{margin:8px 0 0}
+main{max-width:1050px;margin:auto;padding:16px}
+.panel{
+ background:white;
+ border-radius:15px;
+ padding:20px;
+ margin-bottom:18px;
+ box-shadow:0 3px 12px #0001;
+}
+h2{font-size:21px;margin-top:0}
+h3{font-size:17px}
+p{line-height:1.55}
+label{display:block;font-weight:bold;margin:12px 0 6px}
+select,textarea{
+ width:100%;
+ padding:11px;
+ border:1px solid #d9c5b4;
+ border-radius:8px;
+ font-size:16px;
+}
+button{
+ background:#a91e24;
+ color:white;
+ border:0;
+ border-radius:9px;
+ padding:11px 15px;
+ cursor:pointer;
+ font-size:15px;
+ margin:4px;
+}
+button.secondary{background:#73584a}
+button:focus-visible,select:focus-visible,
+textarea:focus-visible{
+ outline:3px solid #e9a63f;
+}
+.layout{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:18px;
+}
+.hint{font-size:14px;color:#735e50}
+.wordbank{
+ display:grid;
+ grid-template-columns:repeat(auto-fill,minmax(80px,1fr));
+ gap:8px;
+}
+.word{
+ background:#fff0dc;
+ border:1px solid #e6c4a1;
+ color:#622d22;
+ border-radius:10px;
+ min-height:78px;
+ margin:0;
+ padding:7px 3px;
+}
+.word .hanzi{
+ display:block;
+ font-size:29px;
+ font-family:"Kaiti SC","STKaiti","KaiTi",serif;
+}
+.word .english{
+ display:block;
+ font-size:11px;
+ margin-top:4px;
+}
+.editLine{
+ display:flex;
+ flex-wrap:wrap;
+ gap:7px;
+ margin:10px 0;
+}
+.slot{
+ width:48px;
+ height:58px;
+ background:#fff5e9;
+ border:2px dashed #c7a384;
+ border-radius:7px;
+ color:#49271d;
+ font-size:28px;
+ padding:0;
+ margin:0;
+ font-family:"Kaiti SC","STKaiti","KaiTi",serif;
+}
+.slot.active{
+ border:3px solid #b51d23;
+ background:#ffe0b8;
+}
+.slot.filled{border-style:solid}
+.preview{
+ background:#f3dfbb;
+ padding:18px 10px;
+ border-radius:12px;
+ text-align:center;
+}
+.scroll{
+ display:inline-block;
+ background:#b51d23;
+ color:#ffe2a0;
+ border:3px solid #e8b657;
+ padding:9px 15px;
+ font-size:24px;
+ font-family:"Kaiti SC","STKaiti","KaiTi",serif;
+ letter-spacing:3px;
+}
+.door{
+ display:flex;
+ justify-content:center;
+ align-items:flex-start;
+ gap:13px;
+ margin:20px auto;
+}
+.strip{
+ background:#b51d23;
+ color:#ffe2a0;
+ border:3px solid #e8b657;
+ width:77px;
+ min-height:300px;
+ padding:15px 7px;
+ writing-mode:vertical-rl;
+ text-orientation:upright;
+ font-size:29px;
+ letter-spacing:5px;
+ font-family:"Kaiti SC","STKaiti","KaiTi",serif;
+}
+.middle{
+ background:#845039;
+ color:#ffe2a0;
+ width:90px;
+ min-height:290px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:44px;
+}
+.status{
+ padding:12px;
+ border-radius:8px;
+ background:#f5eee5;
+ margin-top:10px;
+}
+.success{background:#e5f4e6}
+.warning{background:#fff0d7}
+@media(max-width:720px){
+ .layout{grid-template-columns:1fr}
+ .slot{width:43px;height:53px}
+ .strip{width:65px;font-size:25px}
+ .middle{width:75px}
+}
+@media print{
+ body{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🧧 Chinese Couplet Creator</h1>
+<p>Choose Chinese characters and create your own couplet!</p>
+</header>
+
+<main>
+<section class="panel">
+<h2>1. How to Play</h2>
+<p>A Chinese couplet has two matching lines of poetry.</p>
+<ol>
+<li>Choose a theme and the number of characters.</li>
+<li>Tap a box in the first or second line.</li>
+<li>Choose a Chinese character from the word bank.</li>
+<li>Make both lines meaningful and balanced.</li>
+<li>Check your work and preview your artwork!</li>
+</ol>
+</section>
+
+<div class="layout">
+<section class="panel">
+<h2>2. Create Your Couplet</h2>
+
+<label for="theme">Choose a Theme</label>
+<select id="theme" onchange="changeTheme()">
+<option value="nature">🌿 Nature</option>
+<option value="school">📚 School & Learning</option>
+<option value="friendship">❤️ Friendship</option>
+<option value="newyear">🎉 Chinese New Year</option>
+</select>
+
+<label for="length">Characters per Line</label>
+<select id="length" onchange="changeLength()">
+<option value="4">4 characters — Easy</option>
+<option value="5">5 characters — Medium</option>
+<option value="7">7 characters — Challenge</option>
+</select>
+
+<p id="themeHint" class="hint"></p>
+
+<h3>Upper Couplet — 上联</h3>
+<p class="hint">Tap a box, then choose a character.</p>
+<div id="upperSlots" class="editLine"></div>
+
+<h3>Lower Couplet — 下联</h3>
+<div id="lowerSlots" class="editLine"></div>
+
+<button class="secondary" onclick="removeSelected()">
+Clear Selected Box
+</button>
+
+<button class="secondary" onclick="clearAll()">
+Start Again
+</button>
+
+<h3>3. Choose Chinese Characters</h3>
+<p class="hint">Each character has its English meaning.</p>
+<div id="wordbank" class="wordbank"></div>
+
+<h3>Horizontal Scroll — 横批</h3>
+<p class="hint">Choose a short phrase for the top of your door.</p>
+<select id="horizontal" onchange="updatePreview()">
+<option value="新春快乐">新春快乐 — Happy New Year</option>
+<option value="万事如意">万事如意 — May all go well</option>
+<option value="学无止境">学无止境 — Learning never ends</option>
+<option value="友谊长存">友谊长存 — Friendship lasts forever</option>
+<option value="春满人间">春满人间 — Spring fills the world</option>
+<option value="吉祥如意">吉祥如意 — Good luck and happiness</option>
+</select>
+
+<h3>4. Explain Your Couplet</h3>
+<label for="meaning">What does your couplet mean in English?</label>
+<textarea id="meaning"
+placeholder="My couplet means..."
+rows="3"></textarea>
+
+<button onclick="checkCouplet()">Check My Couplet</button>
+<div id="feedback" class="status" aria-live="polite">
+Select a box to begin.
+</div>
+</section>
+
+<section class="panel">
+<h2>5. Preview Your Couplet</h2>
+<div class="preview">
+<div class="scroll" id="scrollView">新春快乐</div>
+<div class="door">
+<div class="strip" id="lowerView">□□□□</div>
+<div class="middle">福</div>
+<div class="strip" id="upperView">□□□□</div>
+</div>
+</div>
+<p class="hint">
+The upper line goes on the right side of the door.
+The lower line goes on the left.
+</p>
+<p class="hint">
+Your artwork is displayed here only.
+</p>
+</section>
+</div>
+</main>
+
+<script>
+const themes={
+nature:{
+hint:"Create a couplet about mountains, rivers, seasons and flowers.",
+words:[
+["春","Spring"],["秋","Autumn"],
+["夏","Summer"],["冬","Winter"],
+["山","Mountain"],["水","Water"],
+["花","Flower"],["树","Tree"],
+["风","Wind"],["雨","Rain"],
+["天","Sky"],["地","Earth"],
+["日","Sun"],["月","Moon"],
+["青","Green"],["红","Red"],
+["绿","Green"],["白","White"],
+["高","Tall"],["长","Long"],
+["明","Bright"],["清","Clear"],
+["开","Bloom"],["来","Come"],
+["飞","Fly"],["流","Flow"],
+["映","Reflect"],["迎","Welcome"],
+["暖","Warm"],["香","Fragrant"],
+["云","Cloud"],["海","Sea"],
+["新","New"],["美","Beautiful"]
+]},
+school:{
+hint:"Create a couplet about learning, books and dreams.",
+words:[
+["书","Book"],["学","Learn"],
+["读","Read"],["写","Write"],
+["勤","Diligent"],["苦","Hard"],
+["思","Think"],["知","Knowledge"],
+["文","Writing"],["字","Character"],
+["心","Heart"],["梦","Dream"],
+["高","High"],["远","Far"],
+["成","Achieve"],["长","Grow"],
+["新","New"],["明","Bright"],
+["天","Sky"],["地","Earth"],
+["开","Open"],["展","Expand"],
+["路","Road"],["海","Sea"],
+["山","Mountain"],["才","Talent"],
+["好","Good"],["多","Many"],
+["求","Seek"],["真","Truth"]
+]},
+friendship:{
+hint:"Create a couplet about kindness, joy and friendship.",
+words:[
+["友","Friend"],["爱","Love"],
+["心","Heart"],["笑","Smile"],
+["乐","Joy"],["和","Harmony"],
+["同","Together"],["真","True"],
+["暖","Warm"],["情","Feeling"],
+["长","Long"],["好","Good"],
+["天","Sky"],["地","Earth"],
+["春","Spring"],["花","Flower"],
+["开","Bloom"],["来","Come"],
+["相","Mutual"],["伴","Companion"],
+["共","Together"],["欢","Happy"],
+["喜","Joy"],["满","Full"],
+["永","Forever"],["久","Long time"]
+]},
+newyear:{
+hint:"Create a couplet about happiness, good luck and new beginnings.",
+words:[
+["春","Spring"],["新","New"],
+["年","Year"],["福","Blessing"],
+["喜","Joy"],["乐","Happiness"],
+["平","Peace"],["安","Safe"],
+["家","Home"],["门","Door"],
+["来","Come"],["满","Full"],
+["红","Red"],["吉","Lucky"],
+["祥","Auspicious"],["天","Sky"],
+["地","Earth"],["人","People"],
+["花","Flower"],["开","Bloom"],
+["迎","Welcome"],["送","Send"],
+["风","Wind"],["暖","Warm"],
+["好","Good"],["万","Ten thousand"],
+["事","Things"],["如","As"],
+["意","Wish"],["岁","Year"]
+]}
+};
+
+let length=4;
+let lines={upper:[],lower:[]};
+let selected={line:"upper",index:0};
+
+function resetLines(){
+lines={
+upper:Array(length).fill(""),
+lower:Array(length).fill("")
+};
+selected={line:"upper",index:0};
+renderSlots();
+updatePreview();
+}
+
+function changeLength(){
+length=Number(document.getElementById("length").value);
+resetLines();
+}
+
+function changeTheme(){
+const theme=document.getElementById("theme").value;
+document.getElementById("themeHint").textContent=
+themes[theme].hint;
+renderWordBank();
+resetLines();
+}
+
+function renderSlots(){
+["upper","lower"].forEach(line=>{
+const container=document.getElementById(line+"Slots");
+container.innerHTML="";
+lines[line].forEach((ch,i)=>{
+const b=document.createElement("button");
+b.className="slot"+
+(ch?" filled":"")+
+(selected.line===line&&selected.index===i?" active":"");
+b.textContent=ch||"＋";
+b.setAttribute("aria-label",
+line+" character "+(i+1)+(ch?", "+ch:" empty"));
+b.onclick=()=>{
+selected={line,index:i};
+renderSlots();
+};
+container.appendChild(b);
+});
+});
+}
+
+function renderWordBank(){
+const theme=document.getElementById("theme").value;
+const bank=document.getElementById("wordbank");
+bank.innerHTML="";
+themes[theme].words.forEach(([ch,en])=>{
+const b=document.createElement("button");
+b.className="word";
+b.type="button";
+const hanzi=document.createElement("span");
+hanzi.className="hanzi";
+hanzi.textContent=ch;
+const english=document.createElement("span");
+english.className="english";
+english.textContent=en;
+b.append(hanzi,english);
+b.onclick=()=>insertCharacter(ch);
+bank.appendChild(b);
+});
+}
+
+function insertCharacter(ch){
+lines[selected.line][selected.index]=ch;
+const current=selected.line;
+const next=lines[current].findIndex((v,i)=>
+i>selected.index&&!v);
+if(next!==-1){
+selected.index=next;
+}else{
+const firstEmpty=lines[current].indexOf("");
+if(firstEmpty!==-1){
+selected.index=firstEmpty;
+}else if(current==="upper"){
+const otherEmpty=lines.lower.indexOf("");
+if(otherEmpty!==-1){
+selected={line:"lower",index:otherEmpty};
+}
+}
+}
+renderSlots();
+updatePreview();
+}
+
+function removeSelected(){
+lines[selected.line][selected.index]="";
+renderSlots();
+updatePreview();
+}
+
+function clearAll(){
+resetLines();
+document.getElementById("meaning").value="";
+document.getElementById("feedback").className="status";
+document.getElementById("feedback").textContent=
+"Select a box to begin.";
+}
+
+function updatePreview(){
+document.getElementById("upperView").textContent=
+lines.upper.map(x=>x||"□").join("");
+document.getElementById("lowerView").textContent=
+lines.lower.map(x=>x||"□").join("");
+document.getElementById("scrollView").textContent=
+document.getElementById("horizontal").value;
+}
+
+function checkCouplet(){
+const feedback=document.getElementById("feedback");
+if(lines.upper.includes("")||lines.lower.includes("")){
+feedback.className="status warning";
+feedback.textContent=
+"Please fill in every box in both lines.";
+return;
+}
+if(lines.upper.join("")===lines.lower.join("")){
+feedback.className="status warning";
+feedback.textContent=
+"Try making two different but matching lines.";
+return;
+}
+feedback.className="status success";
+feedback.textContent=
+"Great! Both lines have "+length+
+" characters. Now ask yourself: Do the words match? Do the two lines express connected ideas? Ask your teacher to help check the meaning and traditional rules.";
+}
+
+changeTheme();
+</script>
+</body>
+</html>
