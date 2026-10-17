@@ -3,90 +3,113 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 <title>Chinese Couplet Creator</title>
 
 <style>
+:root {
+  --red: #a91e24;
+  --paper-red: #b51d23;
+  --gold: #e8b657;
+  --cream: #fff5e9;
+  --brown: #39271e;
+}
+
 * {
   box-sizing: border-box;
 }
 
+html {
+  width: 100%;
+}
+
 body {
   margin: 0;
+  width: 100%;
   font-family: Arial, sans-serif;
-  background: #fff5e9;
-  color: #39271e;
+  background: var(--cream);
+  color: var(--brown);
 }
 
 header {
-  background: #a91e24;
+  background: var(--red);
   color: white;
   text-align: center;
-  padding: 22px 12px;
+  padding: 24px 14px;
 }
 
 header h1 {
   margin: 0;
-  font-size: 28px;
+  font-size: 29px;
 }
 
 header p {
-  margin: 8px 0 0;
+  margin: 9px 0 0;
+  line-height: 1.5;
 }
 
 main {
-  max-width: 1050px;
+  width: 100%;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 18px;
 }
 
 .panel {
   background: white;
-  border-radius: 15px;
-  padding: 20px;
+  border-radius: 16px;
+  padding: 22px;
   margin-bottom: 18px;
-  box-shadow: 0 3px 12px #0001;
+  box-shadow: 0 3px 12px #00000010;
   min-width: 0;
 }
 
 h2 {
-  font-size: 21px;
-  margin-top: 0;
+  margin: 0 0 17px;
+  font-size: 22px;
 }
 
 h3 {
   font-size: 17px;
+  margin: 23px 0 10px;
 }
 
-p {
-  line-height: 1.55;
+p, li {
+  line-height: 1.6;
 }
 
 label {
   display: block;
   font-weight: bold;
-  margin: 12px 0 6px;
+  margin: 15px 0 7px;
 }
 
-select,
-textarea {
+select, textarea {
   width: 100%;
-  padding: 11px;
+  padding: 12px;
   border: 1px solid #d9c5b4;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 9px;
   font-family: inherit;
+  font-size: 16px;
+  background: white;
+  color: var(--brown);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 95px;
 }
 
 button {
-  background: #a91e24;
+  background: var(--red);
   color: white;
   border: 0;
   border-radius: 9px;
   padding: 11px 15px;
-  cursor: pointer;
   font-size: 15px;
-  margin: 4px;
+  font-family: inherit;
+  cursor: pointer;
   touch-action: manipulation;
 }
 
@@ -98,13 +121,21 @@ button:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
   outline: 3px solid #e9a63f;
+  outline-offset: 2px;
 }
 
-/* Main two-column layout */
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 15px 0;
+}
 
 .layout {
   display: grid;
-  grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
   gap: 18px;
   align-items: start;
 }
@@ -114,41 +145,9 @@ textarea:focus-visible {
   color: #735e50;
 }
 
-/* Word bank */
+/* CHARACTER BOXES */
 
-.wordbank {
-  display: grid;
-  grid-template-columns:
-    repeat(auto-fill,minmax(80px,1fr));
-  gap: 8px;
-}
-
-.word {
-  background: #fff0dc;
-  border: 1px solid #e6c4a1;
-  color: #622d22;
-  border-radius: 10px;
-  min-height: 78px;
-  margin: 0;
-  padding: 7px 3px;
-}
-
-.word .hanzi {
-  display: block;
-  font-size: 29px;
-  font-family:
-    "Kaiti SC","STKaiti","KaiTi",serif;
-}
-
-.word .english {
-  display: block;
-  font-size: 11px;
-  margin-top: 4px;
-}
-
-/* Character slots */
-
-.editLine {
+.edit-line {
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
@@ -158,69 +157,133 @@ textarea:focus-visible {
 .slot {
   width: 48px;
   height: 58px;
+  flex: 0 0 48px;
   background: #fff5e9;
-  border: 2px dashed #c7a384;
-  border-radius: 7px;
   color: #49271d;
-  font-size: 28px;
+  border: 2px dashed #c7a384;
+  border-radius: 8px;
   padding: 0;
-  margin: 0;
+  font-size: 28px;
   font-family:
-    "Kaiti SC","STKaiti","KaiTi",serif;
+    "Kaiti SC", "STKaiti", "KaiTi", serif;
 }
 
 .slot.active {
-  border: 3px solid #b51d23;
   background: #ffe0b8;
+  border: 3px solid var(--paper-red);
 }
 
 .slot.filled {
   border-style: solid;
 }
 
-/* Preview panel */
+/* WORD BANK */
+
+.wordbank {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fill, minmax(76px, 1fr));
+  gap: 8px;
+}
+
+.word {
+  min-height: 79px;
+  padding: 8px 3px;
+  background: #fff0dc;
+  color: #622d22;
+  border: 1px solid #e6c4a1;
+  border-radius: 10px;
+}
+
+.word .hanzi {
+  display: block;
+  font-size: 29px;
+  line-height: 1.2;
+  font-family:
+    "Kaiti SC", "STKaiti", "KaiTi", serif;
+}
+
+.word .english {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+/* PREVIEW */
+
+.preview-panel {
+  min-width: 0;
+}
 
 .preview {
-  background: #f3dfbb;
-  padding: 22px 10px;
-  border-radius: 12px;
-
   width: 100%;
+  min-width: 0;
+  background: #f3dfbb;
+  border-radius: 13px;
+  padding: 24px 8px 30px;
 
+  /* The entire artwork is centred here. */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
 
   overflow: hidden;
 }
 
-/* Horizontal scroll */
+/*
+  The artwork has its own width.
+  Its centre is independent of the
+  text and other content in the panel.
+*/
+
+.artwork {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* HORIZONTAL SCROLL */
 
 .scroll {
-  display: inline-flex;
-  justify-content: center;
+  display: flex;
   align-items: center;
+  justify-content: center;
 
-  background: #b51d23;
-  color: #ffe2a0;
-
-  border: 3px solid #e8b657;
+  width: max-content;
+  max-width: 100%;
 
   min-height: 60px;
-  padding: 9px 15px;
+  padding: 10px 18px;
 
-  font-size: 24px;
-  font-family:
-    "Kaiti SC","STKaiti","KaiTi",serif;
+  margin: 0 auto;
 
+  background: var(--paper-red);
+  color: #ffe2a0;
+  border: 3px solid var(--gold);
+
+  font-size: 25px;
   letter-spacing: 3px;
   white-space: nowrap;
 
-  max-width: 100%;
+  font-family:
+    "Kaiti SC", "STKaiti", "KaiTi", serif;
 }
 
-/* Door: fixed symmetrical grid */
+/*
+  The door is a single centred object.
+  There is no width:100% on .door.
+*/
+
+.door-holder {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 22px;
+}
 
 .door {
   display: grid;
@@ -228,134 +291,134 @@ textarea:focus-visible {
   grid-template-columns:
     77px 90px 77px;
 
-  gap: 13px;
+  column-gap: 13px;
 
-  justify-content: center;
+  width: max-content;
+  flex: 0 0 auto;
+
+  margin: 0;
+  padding: 0;
+
   align-items: start;
-
-  width: 100%;
-  margin: 20px auto 0;
+  justify-content: center;
 }
 
-/* Vertical couplet strips */
-
 .strip {
-  background: #b51d23;
+  width: 77px;
+  height: 320px;
+
+  background: var(--paper-red);
   color: #ffe2a0;
 
-  border: 3px solid #e8b657;
-
-  width: 77px;
-  height: 300px;
-
-  padding: 15px 7px;
+  border: 3px solid var(--gold);
+  padding: 13px 5px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  gap: 8px;
+  gap: 9px;
 
   font-size: 29px;
-
   font-family:
-    "Kaiti SC","STKaiti","KaiTi",serif;
+    "Kaiti SC", "STKaiti", "KaiTi", serif;
 }
 
 .vertical-character {
   display: block;
+  flex: 0 0 auto;
   line-height: 1;
   text-align: center;
 }
 
-/* Centre door */
-
 .middle {
+  width: 90px;
+  height: 320px;
+
   background: #845039;
   color: #ffe2a0;
-
-  width: 90px;
-  height: 300px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  font-size: 44px;
+  font-size: 46px;
+  font-family:
+    "Kaiti SC", "STKaiti", "KaiTi", serif;
 }
 
-/* Feedback */
+/* FEEDBACK */
 
 .status {
-  padding: 12px;
-  border-radius: 8px;
   background: #f5eee5;
-  margin-top: 10px;
-  line-height: 1.5;
+  padding: 13px;
+  margin-top: 13px;
+  border-radius: 9px;
+  line-height: 1.55;
 }
 
-.success {
+.status.success {
   background: #e5f4e6;
 }
 
-.warning {
+.status.warning {
   background: #fff0d7;
 }
 
-/* Tablet and phone */
+.preview-note {
+  margin-top: 18px;
+}
+
+/* TABLETS AND PHONES */
 
 @media (max-width: 720px) {
-
   .layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .slot {
-    width: 43px;
-    height: 53px;
+  main {
+    padding: 12px;
   }
 
-  .door {
-    grid-template-columns:
-      65px 75px 65px;
-
-    gap: 10px;
-  }
-
-  .strip {
-    width: 65px;
-    height: 300px;
-    font-size: 25px;
-  }
-
-  .middle {
-    width: 75px;
-    height: 300px;
+  .panel {
+    padding: 17px;
   }
 }
 
-@media (max-width: 360px) {
-
+@media (max-width: 400px) {
   .door {
     grid-template-columns:
-      55px 65px 55px;
+      60px 72px 60px;
+    column-gap: 9px;
+  }
+
+  .strip {
+    width: 60px;
+    height: 310px;
+    font-size: 25px;
     gap: 8px;
   }
 
-  .strip {
-    width: 55px;
-    font-size: 22px;
-  }
-
   .middle {
-    width: 65px;
+    width: 72px;
+    height: 310px;
+    font-size: 40px;
   }
 
   .scroll {
-    font-size: 20px;
+    font-size: 21px;
+    padding: 9px 12px;
+  }
+
+  .slot {
+    width: 42px;
+    height: 52px;
+    flex-basis: 42px;
+    font-size: 25px;
   }
 }
+
+/* No print view */
 
 @media print {
   body {
@@ -378,86 +441,77 @@ textarea:focus-visible {
 <main>
 
 <section class="panel">
+  <h2>1. How to Play</h2>
 
-<h2>1. How to Play</h2>
+  <p>
+    A Chinese couplet has two matching
+    lines of poetry.
+  </p>
 
-<p>
-A Chinese couplet has two matching lines
-of poetry.
-</p>
-
-<ol>
-  <li>
-    Choose a theme and the number
-    of characters.
-  </li>
-  <li>
-    Tap a box in the first or second line.
-  </li>
-  <li>
-    Choose a Chinese character
-    from the word bank.
-  </li>
-  <li>
-    Make both lines meaningful and balanced.
-  </li>
-  <li>
-    Check your work and preview your artwork!
-  </li>
-</ol>
-
+  <ol>
+    <li>
+      Choose a theme and the number
+      of characters.
+    </li>
+    <li>
+      Tap a box in the first or second line.
+    </li>
+    <li>
+      Choose a Chinese character
+      from the word bank.
+    </li>
+    <li>
+      Make both lines meaningful
+      and balanced.
+    </li>
+    <li>
+      Check your work and preview
+      your artwork!
+    </li>
+  </ol>
 </section>
 
 <div class="layout">
 
-<!-- LEFT PANEL -->
+<!-- CREATOR PANEL -->
 
 <section class="panel">
 
 <h2>2. Create Your Couplet</h2>
 
 <label for="theme">
-Choose a Theme
+  Choose a Theme
 </label>
 
 <select id="theme" onchange="changeTheme()">
-
-<option value="nature">
-🌿 Nature
-</option>
-
-<option value="school">
-📚 School & Learning
-</option>
-
-<option value="friendship">
-❤️ Friendship
-</option>
-
-<option value="newyear">
-🎉 Chinese New Year
-</option>
-
+  <option value="nature">
+    🌿 Nature
+  </option>
+  <option value="school">
+    📚 School & Learning
+  </option>
+  <option value="friendship">
+    ❤️ Friendship
+  </option>
+  <option value="newyear">
+    🎉 Chinese New Year
+  </option>
 </select>
 
 <label for="length">
-Characters per Line
+  Characters per Line
 </label>
 
 <select id="length" onchange="changeLength()">
-
-<option value="4">
-4 characters — Easy
-</option>
-
-<option value="5">
-5 characters — Medium
-</option>
-
-<option value="7">
-7 characters — Challenge
-</option>
-
+  <option value="4">
+    4 characters — Easy
+  </option>
+  <option value="5">
+    5 characters — Medium
+  </option>
+  <option value="7">
+    7 characters — Challenge
+  </option>
 </select>
 
 <p id="themeHint" class="hint"></p>
@@ -465,31 +519,38 @@ Characters per Line
 <h3>Upper Couplet — 上联</h3>
 
 <p class="hint">
-Tap a box, then choose a character.
+  Tap a box, then choose a character.
 </p>
 
-<div id="upperSlots" class="editLine"></div>
+<div id="upperSlots" class="edit-line"></div>
 
 <h3>Lower Couplet — 下联</h3>
 
-<div id="lowerSlots" class="editLine"></div>
+<div id="lowerSlots" class="edit-line"></div>
 
-<button
-  class="secondary"
-  onclick="removeSelected()">
-  Clear Selected Box
-</button>
+<div class="action-row">
 
-<button
-  class="secondary"
-  onclick="clearAll()">
-  Start Again
-</button>
+  <button
+    type="button"
+    class="secondary"
+    onclick="removeSelected()">
+    Clear Selected Box
+  </button>
+
+  <button
+    type="button"
+    class="secondary"
+    onclick="clearAll()">
+    Start Again
+  </button>
+
+</div>
 
 <h3>3. Choose Chinese Characters</h3>
 
 <p class="hint">
-Each character has its English meaning.
+  Each character has its English meaning.
+  Tap a character to fill the selected box.
 </p>
 
 <div id="wordbank" class="wordbank"></div>
@@ -497,54 +558,58 @@ Each character has its English meaning.
 <h3>Horizontal Scroll — 横批</h3>
 
 <p class="hint">
-Choose a short phrase for the top
-of your door.
+  Choose a short phrase for the top
+  of your door.
 </p>
 
 <select
   id="horizontal"
   onchange="updatePreview()">
 
-<option value="新春快乐">
-新春快乐 — Happy New Year
-</option>
+  <option value="新春快乐">
+    新春快乐 — Happy New Year
+  </option>
 
-<option value="万事如意">
-万事如意 — May all go well
-</option>
+  <option value="万事如意">
+    万事如意 — May all go well
+  </option>
 
-<option value="学无止境">
-学无止境 — Learning never ends
-</option>
+  <option value="学无止境">
+    学无止境 — Learning never ends
+  </option>
 
-<option value="友谊长存">
-友谊长存 — Friendship lasts forever
-</option>
+  <option value="友谊长存">
+    友谊长存 — Friendship lasts forever
+  </option>
 
-<option value="春满人间">
-春满人间 — Spring fills the world
-</option>
+  <option value="春满人间">
+    春满人间 — Spring fills the world
+  </option>
 
-<option value="吉祥如意">
-吉祥如意 — Good luck and happiness
-</option>
+  <option value="吉祥如意">
+    吉祥如意 — Good luck and happiness
+  </option>
 
 </select>
 
 <h3>4. Explain Your Couplet</h3>
 
 <label for="meaning">
-What does your couplet mean in English?
+  What does your couplet mean in English?
 </label>
 
 <textarea
   id="meaning"
-  placeholder="My couplet means..."
-  rows="3"></textarea>
+  rows="3"
+  placeholder="My couplet means..."></textarea>
 
-<button onclick="checkCouplet()">
-Check My Couplet
-</button>
+<div class="action-row">
+  <button
+    type="button"
+    onclick="checkCouplet()">
+    Check My Couplet
+  </button>
+</div>
 
 <div
   id="feedback"
@@ -555,51 +620,59 @@ Check My Couplet
 
 </section>
 
-<!-- RIGHT PANEL -->
+<!-- PREVIEW PANEL -->
 
-<section class="panel">
+<section class="panel preview-panel">
 
 <h2>5. Preview Your Couplet</h2>
 
 <div class="preview">
 
-  <div
-    class="scroll"
-    id="scrollView">
-    新春快乐
-  </div>
+  <div class="artwork">
 
-  <div class="door">
-
-    <!-- Lower line on left -->
     <div
-      class="strip"
-      id="lowerView">
+      id="scrollView"
+      class="scroll">
+      新春快乐
     </div>
 
-    <!-- Centre door -->
-    <div class="middle">
-      福
-    </div>
+    <div class="door-holder">
 
-    <!-- Upper line on right -->
-    <div
-      class="strip"
-      id="upperView">
+      <div class="door">
+
+        <!-- LOWER COUPLET: LEFT -->
+        <div
+          id="lowerView"
+          class="strip">
+        </div>
+
+        <!-- CENTRE -->
+        <div class="middle">
+          福
+        </div>
+
+        <!-- UPPER COUPLET: RIGHT -->
+        <div
+          id="upperView"
+          class="strip">
+        </div>
+
+      </div>
+
     </div>
 
   </div>
 
 </div>
 
-<p class="hint">
-The upper line goes on the right side
-of the door.
-The lower line goes on the left.
+<p class="hint preview-note">
+  The upper line goes on the right
+  side of the door. The lower line
+  goes on the left.
 </p>
 
 <p class="hint">
-Your artwork is displayed here only.
+  Your artwork is displayed here only.
 </p>
 
 </section>
@@ -610,173 +683,169 @@ Your artwork is displayed here only.
 
 <script>
 
-/* THEME WORD BANKS */
+/* ===================================
+   THEME WORD BANKS
+=================================== */
 
 const themes = {
 
-nature: {
+  nature: {
+    hint:
+      "Create a couplet about mountains, rivers, seasons and flowers.",
 
-hint:
-"Create a couplet about mountains, rivers, seasons and flowers.",
+    words: [
+      ["春","Spring"],
+      ["秋","Autumn"],
+      ["夏","Summer"],
+      ["冬","Winter"],
+      ["山","Mountain"],
+      ["水","Water"],
+      ["花","Flower"],
+      ["树","Tree"],
+      ["风","Wind"],
+      ["雨","Rain"],
+      ["天","Sky"],
+      ["地","Earth"],
+      ["日","Sun"],
+      ["月","Moon"],
+      ["青","Green"],
+      ["红","Red"],
+      ["绿","Green"],
+      ["白","White"],
+      ["高","Tall"],
+      ["长","Long"],
+      ["明","Bright"],
+      ["清","Clear"],
+      ["开","Bloom"],
+      ["来","Come"],
+      ["飞","Fly"],
+      ["流","Flow"],
+      ["映","Reflect"],
+      ["迎","Welcome"],
+      ["暖","Warm"],
+      ["香","Fragrant"],
+      ["云","Cloud"],
+      ["海","Sea"],
+      ["新","New"],
+      ["美","Beautiful"]
+    ]
+  },
 
-words: [
-["春","Spring"],
-["秋","Autumn"],
-["夏","Summer"],
-["冬","Winter"],
-["山","Mountain"],
-["水","Water"],
-["花","Flower"],
-["树","Tree"],
-["风","Wind"],
-["雨","Rain"],
-["天","Sky"],
-["地","Earth"],
-["日","Sun"],
-["月","Moon"],
-["青","Green"],
-["红","Red"],
-["绿","Green"],
-["白","White"],
-["高","Tall"],
-["长","Long"],
-["明","Bright"],
-["清","Clear"],
-["开","Bloom"],
-["来","Come"],
-["飞","Fly"],
-["流","Flow"],
-["映","Reflect"],
-["迎","Welcome"],
-["暖","Warm"],
-["香","Fragrant"],
-["云","Cloud"],
-["海","Sea"],
-["新","New"],
-["美","Beautiful"]
-]
+  school: {
+    hint:
+      "Create a couplet about learning, books and dreams.",
 
-},
+    words: [
+      ["书","Book"],
+      ["学","Learn"],
+      ["读","Read"],
+      ["写","Write"],
+      ["勤","Diligent"],
+      ["苦","Hard"],
+      ["思","Think"],
+      ["知","Knowledge"],
+      ["文","Writing"],
+      ["字","Character"],
+      ["心","Heart"],
+      ["梦","Dream"],
+      ["高","High"],
+      ["远","Far"],
+      ["成","Achieve"],
+      ["长","Grow"],
+      ["新","New"],
+      ["明","Bright"],
+      ["天","Sky"],
+      ["地","Earth"],
+      ["开","Open"],
+      ["展","Expand"],
+      ["路","Road"],
+      ["海","Sea"],
+      ["山","Mountain"],
+      ["才","Talent"],
+      ["好","Good"],
+      ["多","Many"],
+      ["求","Seek"],
+      ["真","Truth"]
+    ]
+  },
 
-school: {
+  friendship: {
+    hint:
+      "Create a couplet about kindness, joy and friendship.",
 
-hint:
-"Create a couplet about learning, books and dreams.",
+    words: [
+      ["友","Friend"],
+      ["爱","Love"],
+      ["心","Heart"],
+      ["笑","Smile"],
+      ["乐","Joy"],
+      ["和","Harmony"],
+      ["同","Together"],
+      ["真","True"],
+      ["暖","Warm"],
+      ["情","Feeling"],
+      ["长","Long"],
+      ["好","Good"],
+      ["天","Sky"],
+      ["地","Earth"],
+      ["春","Spring"],
+      ["花","Flower"],
+      ["开","Bloom"],
+      ["来","Come"],
+      ["相","Mutual"],
+      ["伴","Companion"],
+      ["共","Together"],
+      ["欢","Happy"],
+      ["喜","Joy"],
+      ["满","Full"],
+      ["永","Forever"],
+      ["久","Long time"]
+    ]
+  },
 
-words: [
-["书","Book"],
-["学","Learn"],
-["读","Read"],
-["写","Write"],
-["勤","Diligent"],
-["苦","Hard"],
-["思","Think"],
-["知","Knowledge"],
-["文","Writing"],
-["字","Character"],
-["心","Heart"],
-["梦","Dream"],
-["高","High"],
-["远","Far"],
-["成","Achieve"],
-["长","Grow"],
-["新","New"],
-["明","Bright"],
-["天","Sky"],
-["地","Earth"],
-["开","Open"],
-["展","Expand"],
-["路","Road"],
-["海","Sea"],
-["山","Mountain"],
-["才","Talent"],
-["好","Good"],
-["多","Many"],
-["求","Seek"],
-["真","Truth"]
-]
+  newyear: {
+    hint:
+      "Create a couplet about happiness, good luck and new beginnings.",
 
-},
-
-friendship: {
-
-hint:
-"Create a couplet about kindness, joy and friendship.",
-
-words: [
-["友","Friend"],
-["爱","Love"],
-["心","Heart"],
-["笑","Smile"],
-["乐","Joy"],
-["和","Harmony"],
-["同","Together"],
-["真","True"],
-["暖","Warm"],
-["情","Feeling"],
-["长","Long"],
-["好","Good"],
-["天","Sky"],
-["地","Earth"],
-["春","Spring"],
-["花","Flower"],
-["开","Bloom"],
-["来","Come"],
-["相","Mutual"],
-["伴","Companion"],
-["共","Together"],
-["欢","Happy"],
-["喜","Joy"],
-["满","Full"],
-["永","Forever"],
-["久","Long time"]
-]
-
-},
-
-newyear: {
-
-hint:
-"Create a couplet about happiness, good luck and new beginnings.",
-
-words: [
-["春","Spring"],
-["新","New"],
-["年","Year"],
-["福","Blessing"],
-["喜","Joy"],
-["乐","Happiness"],
-["平","Peace"],
-["安","Safe"],
-["家","Home"],
-["门","Door"],
-["来","Come"],
-["满","Full"],
-["红","Red"],
-["吉","Lucky"],
-["祥","Auspicious"],
-["天","Sky"],
-["地","Earth"],
-["人","People"],
-["花","Flower"],
-["开","Bloom"],
-["迎","Welcome"],
-["送","Send"],
-["风","Wind"],
-["暖","Warm"],
-["好","Good"],
-["万","Ten thousand"],
-["事","Things"],
-["如","As"],
-["意","Wish"],
-["岁","Year"]
-]
-
-}
+    words: [
+      ["春","Spring"],
+      ["新","New"],
+      ["年","Year"],
+      ["福","Blessing"],
+      ["喜","Joy"],
+      ["乐","Happiness"],
+      ["平","Peace"],
+      ["安","Safe"],
+      ["家","Home"],
+      ["门","Door"],
+      ["来","Come"],
+      ["满","Full"],
+      ["红","Red"],
+      ["吉","Lucky"],
+      ["祥","Auspicious"],
+      ["天","Sky"],
+      ["地","Earth"],
+      ["人","People"],
+      ["花","Flower"],
+      ["开","Bloom"],
+      ["迎","Welcome"],
+      ["送","Send"],
+      ["风","Wind"],
+      ["暖","Warm"],
+      ["好","Good"],
+      ["万","Ten thousand"],
+      ["事","Things"],
+      ["如","As"],
+      ["意","Wish"],
+      ["岁","Year"]
+    ]
+  }
 
 };
 
-/* APP STATE */
+/* ===================================
+   APP STATE
+=================================== */
 
 let length = 4;
 
@@ -790,7 +859,9 @@ let selected = {
   index: 0
 };
 
-/* RESET */
+/* ===================================
+   RESET LINES
+=================================== */
 
 function resetLines() {
 
@@ -806,10 +877,13 @@ function resetLines() {
 
   renderSlots();
   updatePreview();
+  resetFeedback();
 
 }
 
-/* CHANGE LENGTH */
+/* ===================================
+   CHANGE LENGTH
+=================================== */
 
 function changeLength() {
 
@@ -821,7 +895,9 @@ function changeLength() {
 
 }
 
-/* CHANGE THEME */
+/* ===================================
+   CHANGE THEME
+=================================== */
 
 function changeTheme() {
 
@@ -837,11 +913,13 @@ function changeTheme() {
 
 }
 
-/* DRAW CHARACTER BOXES */
+/* ===================================
+   RENDER INPUT BOXES
+=================================== */
 
 function renderSlots() {
 
-  ["upper","lower"].forEach(line => {
+  ["upper", "lower"].forEach(line => {
 
     const container =
       document.getElementById(
@@ -850,32 +928,34 @@ function renderSlots() {
 
     container.innerHTML = "";
 
-    lines[line].forEach((ch,i) => {
+    lines[line].forEach((ch, i) => {
 
-      const b =
+      const button =
         document.createElement("button");
 
-      b.type = "button";
+      button.type = "button";
 
-      b.className =
+      button.className =
         "slot" +
         (ch ? " filled" : "") +
         (
           selected.line === line &&
           selected.index === i
-          ? " active"
-          : ""
+            ? " active"
+            : ""
         );
 
-      b.textContent = ch || "＋";
+      button.textContent = ch || "＋";
 
-      b.setAttribute(
+      button.setAttribute(
         "aria-label",
-        line + " character " + (i+1) +
+        line +
+        " character " +
+        (i + 1) +
         (ch ? ", " + ch : " empty")
       );
 
-      b.onclick = () => {
+      button.onclick = () => {
 
         selected = {
           line: line,
@@ -886,7 +966,7 @@ function renderSlots() {
 
       };
 
-      container.appendChild(b);
+      container.appendChild(button);
 
     });
 
@@ -894,7 +974,9 @@ function renderSlots() {
 
 }
 
-/* WORD BANK */
+/* ===================================
+   RENDER WORD BANK
+=================================== */
 
 function renderWordBank() {
 
@@ -906,51 +988,52 @@ function renderWordBank() {
 
   bank.innerHTML = "";
 
-  themes[theme].words.forEach(
-    ([ch,en]) => {
+  themes[theme].words.forEach(([ch, en]) => {
 
-      const b =
-        document.createElement("button");
+    const button =
+      document.createElement("button");
 
-      b.type = "button";
-      b.className = "word";
+    button.type = "button";
+    button.className = "word";
 
-      const hanzi =
-        document.createElement("span");
+    const hanzi =
+      document.createElement("span");
 
-      hanzi.className = "hanzi";
-      hanzi.textContent = ch;
+    hanzi.className = "hanzi";
+    hanzi.textContent = ch;
 
-      const english =
-        document.createElement("span");
+    const english =
+      document.createElement("span");
 
-      english.className = "english";
-      english.textContent = en;
+    english.className = "english";
+    english.textContent = en;
 
-      b.append(hanzi,english);
+    button.append(hanzi, english);
 
-      b.onclick = () => {
-        insertCharacter(ch);
-      };
+    button.onclick = () => {
+      insertCharacter(ch);
+    };
 
-      bank.appendChild(b);
+    bank.appendChild(button);
 
-    }
-  );
+  });
 
 }
 
-/* INSERT CHARACTER */
+/* ===================================
+   INSERT CHARACTER
+=================================== */
 
 function insertCharacter(ch) {
 
-  lines[selected.line][selected.index] = ch;
-
   const current = selected.line;
+
+  lines[current][selected.index] = ch;
 
   const next =
     lines[current].findIndex(
-      (v,i) => i > selected.index && !v
+      (value, index) =>
+        index > selected.index && !value
     );
 
   if (next !== -1) {
@@ -986,10 +1069,13 @@ function insertCharacter(ch) {
 
   renderSlots();
   updatePreview();
+  resetFeedback();
 
 }
 
-/* CLEAR ONE BOX */
+/* ===================================
+   CLEAR SELECTED BOX
+=================================== */
 
 function removeSelected() {
 
@@ -997,10 +1083,13 @@ function removeSelected() {
 
   renderSlots();
   updatePreview();
+  resetFeedback();
 
 }
 
-/* START AGAIN */
+/* ===================================
+   START AGAIN
+=================================== */
 
 function clearAll() {
 
@@ -1009,6 +1098,16 @@ function clearAll() {
   document.getElementById(
     "meaning"
   ).value = "";
+
+  resetFeedback();
+
+}
+
+/* ===================================
+   FEEDBACK RESET
+=================================== */
+
+function resetFeedback() {
 
   const feedback =
     document.getElementById("feedback");
@@ -1020,9 +1119,11 @@ function clearAll() {
 
 }
 
-/* RENDER VERTICAL CHARACTERS */
+/* ===================================
+   VERTICAL CHARACTER PREVIEW
+=================================== */
 
-function renderVerticalCharacters(id,chars) {
+function renderVerticalCharacters(id, chars) {
 
   const container =
     document.getElementById(id);
@@ -1045,7 +1146,9 @@ function renderVerticalCharacters(id,chars) {
 
 }
 
-/* UPDATE PREVIEW */
+/* ===================================
+   UPDATE PREVIEW
+=================================== */
 
 function updatePreview() {
 
@@ -1068,7 +1171,9 @@ function updatePreview() {
 
 }
 
-/* CHECK COUPLET */
+/* ===================================
+   CHECK COUPLET
+=================================== */
 
 function checkCouplet() {
 
@@ -1111,14 +1216,17 @@ function checkCouplet() {
   feedback.textContent =
     "Great! Both lines have " +
     length +
-    " characters. Now check whether the words, " +
-    "structures and meanings match. " +
-    "Ask your teacher to help check the meaning " +
-    "and traditional tone rules.";
+    " characters. Now check whether " +
+    "the words, structures and meanings " +
+    "match. Ask your teacher to help " +
+    "check the meaning and traditional " +
+    "tone rules.";
 
 }
 
-/* INITIALISE */
+/* ===================================
+   INITIALISE
+=================================== */
 
 changeTheme();
 
